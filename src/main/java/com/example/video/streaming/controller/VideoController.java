@@ -4,6 +4,7 @@ import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.service.VideoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,5 +34,11 @@ public class VideoController {
       @PathVariable long videoId, @RequestBody VideoRequestDto videoRequestDto) {
     VideoResponseDto response = videoService.updateVideo(videoId, videoRequestDto);
     return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{videoId}")
+  public ResponseEntity<Void> delistVideo(@PathVariable long videoId) {
+    videoService.delistVideo(videoId);
+    return ResponseEntity.ok().build();
   }
 }
