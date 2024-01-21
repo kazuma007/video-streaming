@@ -75,13 +75,7 @@ public class VideoServiceImpl implements VideoService {
   @Transactional
   public VideoResponseDto getVideoMetadataAndContentById(long videoId) {
     Video video = findActiveVideoById(videoId);
-    EngagementEvent engagementEvent = engagementEventService.saveImpression(video);
-
-    // update the engagementEvents since the event has been inserted
-    List<EngagementEvent> updatedEvents =
-        Stream.concat(video.getEngagementEvents().stream(), Stream.of(engagementEvent)).toList();
-    video.setEngagementEvents(updatedEvents);
-
+    engagementEventService.saveImpression(video);
     return mapConvertUtil.videoToVideoResponseDto(video);
   }
 
