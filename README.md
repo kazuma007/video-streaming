@@ -72,6 +72,8 @@ The API accepts a videoId and soft delete the video item, the `is_deleted` flag 
 
 The API accepts a videoId and returns the video metadata and the corresponding content.
 
+#### Example
+
 ```
 % curl -X GET http://localhost:8080/api/v1/videos/1
 
@@ -81,6 +83,8 @@ The API accepts a videoId and returns the video metadata and the corresponding c
 ## Play a video API
 
 The API accepts a videoId and returns the content related to a video. The content is a URL to a video content.
+
+#### Example
 
 ```
 % curl -X GET http://localhost:8080/api/v1/videos/1/play
@@ -92,6 +96,8 @@ The API accepts a videoId and returns the content related to a video. The conten
 
 The API returns a list of video, but each content only a subset of the video metadata.
 
+#### Example
+
 ```
 % curl -X GET http://localhost:8080/api/v1/videos
 
@@ -101,6 +107,8 @@ The API returns a list of video, but each content only a subset of the video met
 ### Search for videos based on some search/query criteria
 
 The API accepts a search query and returns a list of video that matches to the criteria.
+
+#### Example
 
 ```
 % curl -X GET "http://localhost:8080/api/v1/videos/search?synopsis=test"
@@ -114,6 +122,18 @@ The API accepts a search query and returns a list of video that matches to the c
 % curl -X GET "http://localhost:8080/api/v1/videos/search?title=1"
 
 {"videos":[]}
+```
+
+### Retrieve the engagement statistic API
+
+The API returns the engagement statistic for a video such as impressions and views.
+
+#### Example
+
+```
+% curl -X GET http://localhost:8080/api/v1/videos/1/engagements
+
+{"videoId":1,"impressionsCount":6,"viewsCount":2}
 ```
 
 ## Instructions on how to compile and run the solution
