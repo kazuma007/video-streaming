@@ -98,6 +98,24 @@ The API returns a list of video, but each content only a subset of the video met
 {"videos":[{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120},{"videoId":3,"title":"test-title-2","synopsis":"test-synopsis-2","director":"test-director-2","yearOfRelease":2023,"genre":"SF","actor":"test-cast-2","runningTime":150}]}
 ```
 
+### Search for videos based on some search/query criteria
+
+The API accepts a search query and returns a list of video that matches to the criteria.
+
+```
+% curl -X GET "http://localhost:8080/api/v1/videos/search?synopsis=test"
+
+{"videos":[{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120},{"videoId":3,"title":"test-title-2","synopsis":"test-synopsis-2","director":"test-director-2","yearOfRelease":2023,"genre":"SF","actor":"test-cast-2","runningTime":150}]}
+
+% curl -X GET "http://localhost:8080/api/v1/videos/search?title=2"
+
+{"videos":[{"videoId":3,"title":"test-title-2","synopsis":"test-synopsis-2","director":"test-director-2","yearOfRelease":2023,"genre":"SF","actor":"test-cast-2","runningTime":150}]}
+
+% curl -X GET "http://localhost:8080/api/v1/videos/search?title=1"
+
+{"videos":[]}
+```
+
 ## Instructions on how to compile and run the solution
 
 1. Set up the database
