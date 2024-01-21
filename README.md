@@ -16,6 +16,12 @@ I have decided to create `Video` table and `EngagementEvent` table.
 
 ![Table definition](table-definition.png)
 
+### File(Video) upload
+
+This time, due to the time constraints, I have decided to upload a file to the local directory. Ideally, file uploads should be handled using cloud-based storage services (like Amazon S3).
+
+Uploading large files directly through an API can be time-consuming and may lead to timeouts or performance issues. Therefore, asynchronous processing such as a queue system can be utilized in the future.
+
 ## Assumption
 
 ## Instructions on how to compile and run the solution
