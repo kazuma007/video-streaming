@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class FileServiceImpl implements FileService {
+class FileServiceImpl implements FileService {
   private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
   private final Path fileStorageLocation;
 
   @Autowired
-  public FileServiceImpl(ApplicationProperties applicationProperties) {
+  FileServiceImpl(ApplicationProperties applicationProperties) {
     this.fileStorageLocation =
         Paths.get(applicationProperties.getFileStorageLocation()).toAbsolutePath().normalize();
     try {
