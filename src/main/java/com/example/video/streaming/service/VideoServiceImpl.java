@@ -4,8 +4,10 @@ import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.VideoRepository;
 import com.example.video.streaming.util.MapConvertUtil;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+@Service
 public class VideoServiceImpl implements VideoService {
   private final FileService fileService;
   private final VideoRepository videoRepository;
