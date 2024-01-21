@@ -10,4 +10,6 @@ public interface VideoService {
   VideoResponseDto updateVideo(long videoId, VideoRequestDto videoRequestDto);
 
   void delistVideo(long videoId);
+
+  VideoResponseDto getVideoMetadataAndContentById(long videoId);
 }

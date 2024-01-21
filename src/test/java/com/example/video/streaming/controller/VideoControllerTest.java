@@ -92,8 +92,8 @@ class VideoControllerTest {
     void delistVideo_whenEntityDoesNotExist_ShouldReturnNotFound() throws Exception {
       long videoId = 1L;
       doThrow(new EntityNotFoundException("Entity not found"))
-              .when(videoService)
-              .delistVideo(videoId);
+          .when(videoService)
+          .delistVideo(videoId);
       mockMvc.perform(delete("/api/v1/videos/{videoId}", videoId)).andExpect(status().isNotFound());
     }
   }

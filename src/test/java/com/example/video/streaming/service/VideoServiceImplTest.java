@@ -1,5 +1,6 @@
 package com.example.video.streaming.service;
 
+import static com.example.video.streaming.helper.EngagementEventCreator.createEngagementEvent;
 import static com.example.video.streaming.helper.VideoCreator.createVideo;
 import static com.example.video.streaming.helper.VideoCreator.createVideoRequestDto;
 import static com.example.video.streaming.helper.VideoCreator.createVideoResponseDto;
@@ -13,11 +14,13 @@ import static org.mockito.Mockito.when;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
+import com.example.video.streaming.model.EngagementType;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.VideoRepository;
 import com.example.video.streaming.util.MapConvertUtil;
 import com.example.video.streaming.util.MapConvertUtilImpl;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class VideoServiceImplTest {
 
   @Mock private FileService fileService;
+  @Mock private EngagementEventService engagementEventService;
 
   @Mock private VideoRepository videoRepository;
 
@@ -42,7 +46,8 @@ public class VideoServiceImplTest {
   @BeforeEach
   public void setUp() {
     MapConvertUtil mapConvertUtil = new MapConvertUtilImpl();
-    this.videoService = new VideoServiceImpl(fileService, videoRepository, mapConvertUtil);
+    this.videoService =
+        new VideoServiceImpl(fileService, engagementEventService, videoRepository, mapConvertUtil);
   }
 
   @Nested
@@ -130,6 +135,48 @@ public class VideoServiceImplTest {
       when(videoRepository.findById(videoId)).thenReturn(Optional.empty());
       Assertions.assertThrows(
           EntityNotFoundException.class, () -> videoService.delistVideo(videoId));
+    }
+  }
+
+  @Nested
+  @DisplayName("Get Video By Id Method")
+  class getVideoInfoByIdTest {
+
+    @Test
+    @DisplayName("when video exists, should return video and save impression")
+    public void whenVideoExists_ShouldReturnVideoAndSaveImpression() {
+      long videoId = 1L;
+      Video mockVideo = createVideo(false);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(engagementEventService.saveImpression(mockVideo))
+          .thenReturn(createEngagementEvent(mockVideo, EngagementType.IMPRESSION));
+
+      VideoResponseDto expected =
+          createVideoResponseDto(false, Map.of(EngagementType.IMPRESSION.name().toLowerCase(), 1L));
+      VideoResponseDto actual = videoService.getVideoMetadataAndContentById(videoId);
+      assertThat(actual).isEqualTo(expected);
+      verify(engagementEventService, times(1)).saveImpression(mockVideo);
+    }
+
+    @Test
+    @DisplayName("when video exists but already soft deleted, should throw EntityNotFoundException")
+    public void whenVideoExistsButAlreadySoftDeleted_ShouldThrowEntityNotFoundException() {
+      long videoId = 1L;
+      Video mockVideo = createVideo(true);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      Assertions.assertThrows(
+          EntityNotFoundException.class,
+          () -> videoService.getVideoMetadataAndContentById(videoId));
+    }
+
+    @Test
+    @DisplayName("when video does not exist, should throw EntityNotFoundException")
+    public void whenVideoDoesNotExist_ShouldThrowEntityNotFoundException() {
+      long videoId = 1L;
+      when(videoRepository.findById(videoId)).thenReturn(Optional.empty());
+      Assertions.assertThrows(
+          EntityNotFoundException.class,
+          () -> videoService.getVideoMetadataAndContentById(videoId));
     }
   }
 }
