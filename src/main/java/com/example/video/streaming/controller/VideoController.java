@@ -62,4 +62,10 @@ public class VideoController {
     VideoListResponseDto response = videoService.getAvailableVideos();
     return ResponseEntity.ok(response);
   }
+
+  @GetMapping("/search")
+  public ResponseEntity<VideoListResponseDto> searchVideos(VideoRequestDto request) {
+    VideoListResponseDto response = videoService.searchVideos(request);
+    return ResponseEntity.ok(response);
+  }
 }

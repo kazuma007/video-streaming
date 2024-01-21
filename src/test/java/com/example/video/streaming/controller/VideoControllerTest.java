@@ -166,5 +166,23 @@ class VideoControllerTest {
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
+
+    @Test
+    @DisplayName(
+        "GET /api/v1/videos/search - Search for videos based on some search/query criteria")
+    void searchVideos_ShouldReturnListOfVideos() throws Exception {
+      VideoRequestDto request = new VideoRequestDto();
+      request.setDirector("test-director");
+
+      VideoListResponseDto response =
+          VideoListResponseDto.builder().videos(List.of(new BasicVideoResponseDto())).build();
+      when(videoService.searchVideos(any(VideoRequestDto.class))).thenReturn(response);
+
+      mockMvc
+          .perform(get("/api/v1/videos/search").param("director", "Director Name"))
+          .andExpect(status().isOk())
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.videos").exists());
+    }
   }
 }
