@@ -1,5 +1,6 @@
 package com.example.video.streaming.service;
 
+import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
@@ -74,5 +75,12 @@ public class VideoServiceImpl implements VideoService {
     video.setEngagementEvents(updatedEvents);
 
     return mapConvertUtil.videoToVideoResponseDto(video);
+  }
+
+  @Override
+  public VideoContentResponseDto getVideoContentById(long videoId) {
+    Video video = findActiveVideoById(videoId);
+    engagementEventService.saveView(video);
+    return new VideoContentResponseDto(video.getContentLink());
   }
 }

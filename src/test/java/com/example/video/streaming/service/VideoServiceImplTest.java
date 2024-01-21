@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
@@ -140,7 +141,7 @@ public class VideoServiceImplTest {
 
   @Nested
   @DisplayName("Get Video By Id Method")
-  class getVideoInfoByIdTest {
+  class getVideoMetadataAndContentByIdTest {
 
     @Test
     @DisplayName("when video exists, should return video and save impression")
@@ -177,6 +178,43 @@ public class VideoServiceImplTest {
       Assertions.assertThrows(
           EntityNotFoundException.class,
           () -> videoService.getVideoMetadataAndContentById(videoId));
+    }
+  }
+
+  @Nested
+  @DisplayName("Get Video Content By Id Method")
+  class getVideoContentByIdTest {
+
+    @Test
+    @DisplayName("when video exists, should return video and save impression")
+    public void whenVideoExists_ShouldReturnVideoAndSaveImpression() {
+      long videoId = 1L;
+      Video mockVideo = createVideo(false);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+
+      VideoContentResponseDto expected = new VideoContentResponseDto(mockVideo.getContentLink());
+      VideoContentResponseDto actual = videoService.getVideoContentById(videoId);
+      assertThat(actual).isEqualTo(expected);
+      verify(engagementEventService, times(1)).saveView(mockVideo);
+    }
+
+    @Test
+    @DisplayName("when video exists but already soft deleted, should throw EntityNotFoundException")
+    public void whenVideoExistsButAlreadySoftDeleted_ShouldThrowEntityNotFoundException() {
+      long videoId = 1L;
+      Video mockVideo = createVideo(true);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      Assertions.assertThrows(
+          EntityNotFoundException.class, () -> videoService.getVideoContentById(videoId));
+    }
+
+    @Test
+    @DisplayName("when video does not exist, should throw EntityNotFoundException")
+    public void whenVideoDoesNotExist_ShouldThrowEntityNotFoundException() {
+      long videoId = 1L;
+      when(videoRepository.findById(videoId)).thenReturn(Optional.empty());
+      Assertions.assertThrows(
+          EntityNotFoundException.class, () -> videoService.getVideoContentById(videoId));
     }
   }
 }
