@@ -58,6 +58,16 @@ The API accepts a metadata and returns the saved content.
 {"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"pexels-lina-kivaka-1741205.jpg","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T09:53:00.699","engagementEventsCount":{},"deleted":false}
 ```
 
+### Delist API
+
+The API accepts a videoId and soft delete the video item, the `is_deleted` flag become true.
+
+#### Example
+
+```
+% curl -X DELETE http://localhost:8080/api/v1/videos/2
+```
+
 ## Instructions on how to compile and run the solution
 
 1. Set up the database
