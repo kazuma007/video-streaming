@@ -9,6 +9,13 @@ The main purpose of the application is to:
 
 ## Decision
 
+### Table definition
+
+I have decided to create `Video` table and `EngagementEvent` table.
+`Video` table is to manage information about video content, while `EngagementEvent` table tracks user engagement activities (such as views and impressions).
+
+![Table definition](table-definition.png)
+
 ## Assumption
 
 ## Instructions on how to compile and run the solution
