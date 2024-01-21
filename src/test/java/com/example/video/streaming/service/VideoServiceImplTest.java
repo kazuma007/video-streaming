@@ -1,6 +1,7 @@
 package com.example.video.streaming.service;
 
 import static com.example.video.streaming.helper.EngagementEventCreator.createEngagementEvent;
+import static com.example.video.streaming.helper.VideoCreator.createBasicVideoResponseDto;
 import static com.example.video.streaming.helper.VideoCreator.createVideo;
 import static com.example.video.streaming.helper.VideoCreator.createVideoRequestDto;
 import static com.example.video.streaming.helper.VideoCreator.createVideoResponseDto;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.video.streaming.dto.VideoContentResponseDto;
+import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
@@ -21,6 +23,7 @@ import com.example.video.streaming.repository.VideoRepository;
 import com.example.video.streaming.util.MapConvertUtil;
 import com.example.video.streaming.util.MapConvertUtilImpl;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -215,6 +218,22 @@ public class VideoServiceImplTest {
       when(videoRepository.findById(videoId)).thenReturn(Optional.empty());
       Assertions.assertThrows(
           EntityNotFoundException.class, () -> videoService.getVideoContentById(videoId));
+    }
+  }
+
+  @Nested
+  @DisplayName("List all available videos Method")
+  class getListAllAvailableVideosTest {
+
+    @Test
+    @DisplayName("when video exists, should return video and save impression")
+    public void whenVideoExists_ShouldReturnVideoAndSaveImpression() {
+      when(videoRepository.findAllByIsDeleted(false)).thenReturn(List.of(createVideo(false)));
+
+      VideoListResponseDto expected =
+          VideoListResponseDto.builder().videos(List.of(createBasicVideoResponseDto())).build();
+      VideoListResponseDto actual = videoService.getAvailableVideos();
+      assertThat(actual).isEqualTo(expected);
     }
   }
 }

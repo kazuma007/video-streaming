@@ -1,6 +1,7 @@
 package com.example.video.streaming.service;
 
 import com.example.video.streaming.dto.VideoContentResponseDto;
+import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,4 +16,6 @@ public interface VideoService {
   VideoResponseDto getVideoMetadataAndContentById(long videoId);
 
   VideoContentResponseDto getVideoContentById(long videoId);
+
+  VideoListResponseDto getAvailableVideos();
 }

@@ -1,5 +1,6 @@
 package com.example.video.streaming.util;
 
+import com.example.video.streaming.dto.BasicVideoResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.model.EngagementEvent;
@@ -44,4 +45,6 @@ public interface MapConvertUtil {
   @Mapping(target = "updatedAt", ignore = true)
   @Mapping(target = "engagementEvents", ignore = true)
   void updateVideoFromDto(VideoRequestDto dto, @MappingTarget Video video);
+
+  BasicVideoResponseDto videoToBasicVideoResponseDto(Video video);
 }
