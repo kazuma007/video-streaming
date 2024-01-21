@@ -11,11 +11,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.video.streaming.dto.BasicVideoResponseDto;
 import com.example.video.streaming.dto.VideoContentResponseDto;
+import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
 import com.example.video.streaming.service.VideoService;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -149,6 +152,19 @@ class VideoControllerTest {
       mockMvc
           .perform(get("/api/v1/videos/{videoId}/play", videoId))
           .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/videos - List Available Videos")
+    void listAvailableVideos_ShouldReturnListOfVideos() throws Exception {
+      VideoListResponseDto response =
+          VideoListResponseDto.builder().videos(List.of(new BasicVideoResponseDto())).build();
+      when(videoService.getAvailableVideos()).thenReturn(response);
+
+      mockMvc
+          .perform(get("/api/v1/videos"))
+          .andExpect(status().isOk())
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
   }
 }
