@@ -45,4 +45,11 @@ public class VideoServiceImpl implements VideoService {
     Video savedVideo = videoRepository.save(video);
     return mapConvertUtil.videoToVideoResponseDto(savedVideo);
   }
+
+  @Override
+  public void delistVideo(long videoId) {
+    Video video = findActiveVideoById(videoId);
+    video.setDeleted(true);
+    videoRepository.save(video);
+  }
 }

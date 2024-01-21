@@ -107,4 +107,29 @@ public class VideoServiceImplTest {
           EntityNotFoundException.class, () -> videoService.updateVideo(videoId, videoRequestDto));
     }
   }
+
+  @Nested
+  @DisplayName("Delist Video Method")
+  class DelistVideoTest {
+
+    @Test
+    @DisplayName("when delisting a video, should mark video as deleted")
+    public void whenDelistingVideo_ShouldMarkVideoAsDeleted() {
+      long videoId = 1L;
+      Video mockVideo = createVideo(false);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      videoService.delistVideo(videoId);
+      verify(videoRepository, times(1)).save(mockVideo);
+    }
+
+    @Test
+    @DisplayName(
+        "when delisting a video which does not exist, should throw EntityNotFoundException")
+    public void whenDelistingVideoWhichDoesNotExist_ShouldMarkVideoAsDeleted() {
+      long videoId = 1L;
+      when(videoRepository.findById(videoId)).thenReturn(Optional.empty());
+      Assertions.assertThrows(
+          EntityNotFoundException.class, () -> videoService.delistVideo(videoId));
+    }
+  }
 }
