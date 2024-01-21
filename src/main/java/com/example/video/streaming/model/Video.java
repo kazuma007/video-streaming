@@ -10,14 +10,19 @@ import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "videos")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Video {
 
   @Id
