@@ -55,7 +55,7 @@ The API accepts a metadata and returns the saved content.
     "genre": "drama",
     "running_time": 120
 }'
-{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"pexels-lina-kivaka-1741205.jpg","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T09:53:00.699","engagementEventsCount":{},"deleted":false}
+{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"test-video.mp4","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T09:53:00.699","engagementEventsCount":{},"deleted":false}
 ```
 
 ### Delist API
@@ -75,7 +75,17 @@ The API accepts a videoId and returns the video metadata and the corresponding c
 ```
 % curl -X GET http://localhost:8080/api/v1/videos/1
 
-{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"pexels-lina-kivaka-1741205.jpg","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T11:37:01.59","engagementEventsCount":{"impression":3},"deleted":false}
+{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"test-video.mp4","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T11:37:01.59","engagementEventsCount":{"impression":3},"deleted":false}
+```
+
+## Play a video API
+
+The API accepts a videoId and returns the content related to a video. The content is a URL to a video content.
+
+```
+% curl -X GET http://localhost:8080/api/v1/videos/1/play
+
+{"contentLink":"test-video.mp4"}
 ```
 
 ## Instructions on how to compile and run the solution
