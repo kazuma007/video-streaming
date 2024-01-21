@@ -26,8 +26,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @WebMvcTest(controllers = VideoController.class)
 class VideoControllerTest {
 
@@ -113,9 +111,9 @@ class VideoControllerTest {
       when(videoService.getVideoMetadataAndContentById(videoId)).thenReturn(response);
 
       mockMvc
-              .perform(get("/api/v1/videos/{videoId}", videoId))
-              .andExpect(status().isOk())
-              .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+          .perform(get("/api/v1/videos/{videoId}", videoId))
+          .andExpect(status().isOk())
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -123,10 +121,9 @@ class VideoControllerTest {
     void getVideo_whenEntityDoesNotExist_ShouldReturnNotFound() throws Exception {
       long videoId = 1L;
       when(videoService.getVideoMetadataAndContentById(videoId))
-              .thenThrow(new EntityNotFoundException("Entity not found"));
+          .thenThrow(new EntityNotFoundException("Entity not found"));
 
       mockMvc.perform(get("/api/v1/videos/{videoId}", videoId)).andExpect(status().isNotFound());
     }
-
   }
 }
