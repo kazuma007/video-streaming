@@ -1,9 +1,11 @@
 package com.example.video.streaming.repository;
 
 import com.example.video.streaming.model.EngagementEvent;
-import com.example.video.streaming.model.Video;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-public interface EngagementEventRepository
-    extends JpaRepository<EngagementEvent, Long>, JpaSpecificationExecutor<Video> {}
+@Repository
+public interface EngagementEventRepository extends JpaRepository<EngagementEvent, Long> {
+  List<EngagementEvent> findByVideoVideoId(long videoId);
+}

@@ -1,17 +1,21 @@
 package com.example.video.streaming.service;
 
 import com.example.video.streaming.dto.BasicVideoResponseDto;
+import com.example.video.streaming.dto.EngagementStatisticsResponseDto;
 import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
 import com.example.video.streaming.model.EngagementEvent;
+import com.example.video.streaming.model.EngagementType;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.VideoRepository;
 import com.example.video.streaming.repository.specifications.VideoSpecifications;
 import com.example.video.streaming.util.MapConvertUtil;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -111,5 +115,22 @@ public class VideoServiceImpl implements VideoService {
     List<BasicVideoResponseDto> videoResponseDtoList =
         videos.stream().map(mapConvertUtil::videoToBasicVideoResponseDto).toList();
     return VideoListResponseDto.builder().videos(videoResponseDtoList).build();
+  }
+
+  public EngagementStatisticsResponseDto getEngagementStatistics(long videoId) {
+    List<EngagementEvent> events = engagementEventService.getEngagementStatistics(videoId);
+
+    Map<String, Long> counts =
+        events.stream()
+            .collect(Collectors.groupingBy(EngagementEvent::getEventType, Collectors.counting()));
+
+    return new EngagementStatisticsResponseDto(
+        videoId,
+        getCountByType(counts, EngagementType.IMPRESSION),
+        getCountByType(counts, EngagementType.VIEW));
+  }
+
+  private int getCountByType(Map<String, Long> counts, EngagementType engagementType) {
+    return counts.getOrDefault(engagementType.name().toLowerCase(), 0L).intValue();
   }
 }

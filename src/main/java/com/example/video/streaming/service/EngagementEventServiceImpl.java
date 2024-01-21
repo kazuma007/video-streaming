@@ -4,6 +4,7 @@ import com.example.video.streaming.model.EngagementEvent;
 import com.example.video.streaming.model.EngagementType;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.EngagementEventRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,11 @@ class EngagementEventServiceImpl implements EngagementEventService {
   @Override
   public EngagementEvent saveView(Video video) {
     return saveEngagementEvent(video, EngagementType.VIEW);
+  }
+
+  @Override
+  public List<EngagementEvent> getEngagementStatistics(long videoId) {
+    return engagementEventRepository.findByVideoVideoId(videoId);
   }
 
   private EngagementEvent saveEngagementEvent(Video video, EngagementType eventType) {

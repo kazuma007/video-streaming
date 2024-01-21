@@ -12,11 +12,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.video.streaming.dto.EngagementStatisticsResponseDto;
 import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
+import com.example.video.streaming.model.EngagementEvent;
 import com.example.video.streaming.model.EngagementType;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.VideoRepository;
@@ -255,6 +257,33 @@ public class VideoServiceImplTest {
       VideoListResponseDto foundVideos = videoService.searchVideos(request);
       assertThat(foundVideos).isEqualTo(expected);
       verify(videoRepository, times(1)).findAll(any(Specification.class));
+    }
+  }
+
+  @Nested
+  @DisplayName("Retrieve Engagement Statistic Method")
+  class RetrieveEngagementStatisticTest {
+
+    @Test
+    @DisplayName("when searching for videos, should return matching videos")
+    public void whenRetrieveEngagementStatistic_ShouldReturnEngazementStatics() {
+      Video video = createVideo(false);
+      List<EngagementEvent> mockEngagementEvent =
+          List.of(
+              createEngagementEvent(video, EngagementType.IMPRESSION),
+              createEngagementEvent(video, EngagementType.IMPRESSION),
+              createEngagementEvent(video, EngagementType.IMPRESSION),
+              createEngagementEvent(video, EngagementType.IMPRESSION),
+              createEngagementEvent(video, EngagementType.VIEW),
+              createEngagementEvent(video, EngagementType.VIEW));
+      when(engagementEventService.getEngagementStatistics(video.getVideoId()))
+          .thenReturn(mockEngagementEvent);
+
+      EngagementStatisticsResponseDto expected =
+          new EngagementStatisticsResponseDto(video.getVideoId(), 4, 2);
+      EngagementStatisticsResponseDto actual =
+          videoService.getEngagementStatistics(video.getVideoId());
+      assertThat(actual).isEqualTo(expected);
     }
   }
 }
