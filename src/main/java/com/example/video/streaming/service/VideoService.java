@@ -1,5 +1,6 @@
 package com.example.video.streaming.service;
 
+import com.example.video.streaming.dto.EngagementStatisticsResponseDto;
 import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
@@ -20,4 +21,6 @@ public interface VideoService {
   VideoListResponseDto getAvailableVideos();
 
   VideoListResponseDto searchVideos(VideoRequestDto request);
+
+  EngagementStatisticsResponseDto getEngagementStatistics(long videoId);
 }

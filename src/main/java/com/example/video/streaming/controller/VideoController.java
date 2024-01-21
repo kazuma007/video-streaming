@@ -1,5 +1,6 @@
 package com.example.video.streaming.controller;
 
+import com.example.video.streaming.dto.EngagementStatisticsResponseDto;
 import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
@@ -66,6 +67,13 @@ public class VideoController {
   @GetMapping("/search")
   public ResponseEntity<VideoListResponseDto> searchVideos(VideoRequestDto request) {
     VideoListResponseDto response = videoService.searchVideos(request);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{videoId}/engagements")
+  public ResponseEntity<EngagementStatisticsResponseDto> getEngagementStatistics(
+      @PathVariable long videoId) {
+    EngagementStatisticsResponseDto response = videoService.getEngagementStatistics(videoId);
     return ResponseEntity.ok(response);
   }
 }

@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.video.streaming.dto.BasicVideoResponseDto;
+import com.example.video.streaming.dto.EngagementStatisticsResponseDto;
 import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoListResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
@@ -189,6 +190,19 @@ class VideoControllerTest {
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
           .andExpect(jsonPath("$.videos").exists());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/videos/{videoId}/engagements - Get Engagement Statistics")
+    void getEngagementStatistics_ShouldReturnEngagementStatistics() throws Exception {
+      long videoId = 1L;
+      EngagementStatisticsResponseDto response = new EngagementStatisticsResponseDto();
+      when(videoService.getEngagementStatistics(videoId)).thenReturn(response);
+      mockMvc
+          .perform(get("/api/v1/videos/{videoId}/engagements", videoId))
+          .andExpect(status().isOk())
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.videoId").exists());
     }
   }
 }
