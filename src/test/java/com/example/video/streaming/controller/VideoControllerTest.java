@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.video.streaming.dto.VideoContentResponseDto;
 import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
 import com.example.video.streaming.exception.EntityNotFoundException;
@@ -124,6 +125,30 @@ class VideoControllerTest {
           .thenThrow(new EntityNotFoundException("Entity not found"));
 
       mockMvc.perform(get("/api/v1/videos/{videoId}", videoId)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/videos/{videoId}/play - Play Video")
+    void playVideo_ShouldReturnVideoContentResponseDto() throws Exception {
+      long videoId = 1L;
+      VideoContentResponseDto response = new VideoContentResponseDto("test-video.mp4");
+      when(videoService.getVideoContentById(videoId)).thenReturn(response);
+
+      mockMvc
+          .perform(get("/api/v1/videos/{videoId}/play", videoId))
+          .andExpect(status().isOk())
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/videos/{videoId}/play - Play Video")
+    void playVideo_whenEntityDoesNotExist_ShouldReturnNotFound() throws Exception {
+      long videoId = 1L;
+      when(videoService.getVideoContentById(videoId))
+          .thenThrow(new EntityNotFoundException("Entity not found"));
+      mockMvc
+          .perform(get("/api/v1/videos/{videoId}/play", videoId))
+          .andExpect(status().isNotFound());
     }
   }
 }
