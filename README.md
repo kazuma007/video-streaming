@@ -88,6 +88,16 @@ The API accepts a videoId and returns the content related to a video. The conten
 {"contentLink":"test-video.mp4"}
 ```
 
+### List all available videos API
+
+The API returns a list of video, but each content only a subset of the video metadata.
+
+```
+% curl -X GET http://localhost:8080/api/v1/videos
+
+{"videos":[{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120},{"videoId":3,"title":"test-title-2","synopsis":"test-synopsis-2","director":"test-director-2","yearOfRelease":2023,"genre":"SF","actor":"test-cast-2","runningTime":150}]}
+```
+
 ## Instructions on how to compile and run the solution
 
 1. Set up the database
