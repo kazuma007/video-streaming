@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -24,6 +25,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @WebMvcTest(controllers = VideoController.class)
 class VideoControllerTest {
@@ -96,5 +99,34 @@ class VideoControllerTest {
           .delistVideo(videoId);
       mockMvc.perform(delete("/api/v1/videos/{videoId}", videoId)).andExpect(status().isNotFound());
     }
+  }
+
+  @Nested
+  @DisplayName("GET Requests")
+  class GetRequests {
+
+    @Test
+    @DisplayName("GET /api/v1/videos/{videoId} - Get Video by ID")
+    void getVideo_ShouldReturnVideoResponseDto() throws Exception {
+      long videoId = 1L;
+      VideoResponseDto response = new VideoResponseDto();
+      when(videoService.getVideoMetadataAndContentById(videoId)).thenReturn(response);
+
+      mockMvc
+              .perform(get("/api/v1/videos/{videoId}", videoId))
+              .andExpect(status().isOk())
+              .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/videos/{videoId} - Get Video by ID (Entity Not Found)")
+    void getVideo_whenEntityDoesNotExist_ShouldReturnNotFound() throws Exception {
+      long videoId = 1L;
+      when(videoService.getVideoMetadataAndContentById(videoId))
+              .thenThrow(new EntityNotFoundException("Entity not found"));
+
+      mockMvc.perform(get("/api/v1/videos/{videoId}", videoId)).andExpect(status().isNotFound());
+    }
+
   }
 }
