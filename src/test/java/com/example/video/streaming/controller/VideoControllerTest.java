@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.video.streaming.dto.BasicVideoResponseDto;
@@ -56,7 +57,8 @@ class VideoControllerTest {
       mockMvc
           .perform(multipart("/api/v1/videos").file(file))
           .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.videoId").exists());
     }
   }
 
@@ -77,7 +79,8 @@ class VideoControllerTest {
                   .contentType(MediaType.APPLICATION_JSON)
                   .content("{}"))
           .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.videoId").exists());
     }
   }
 
@@ -117,7 +120,8 @@ class VideoControllerTest {
       mockMvc
           .perform(get("/api/v1/videos/{videoId}", videoId))
           .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.videoId").exists());
     }
 
     @Test
@@ -140,7 +144,8 @@ class VideoControllerTest {
       mockMvc
           .perform(get("/api/v1/videos/{videoId}/play", videoId))
           .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.contentLink").exists());
     }
 
     @Test
@@ -164,7 +169,8 @@ class VideoControllerTest {
       mockMvc
           .perform(get("/api/v1/videos"))
           .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.videos").exists());
     }
 
     @Test
