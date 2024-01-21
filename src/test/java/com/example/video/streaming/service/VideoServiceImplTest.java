@@ -1,5 +1,8 @@
 package com.example.video.streaming.service;
 
+import static com.example.video.streaming.helper.VideoCreator.createVideo;
+import static com.example.video.streaming.helper.VideoCreator.createVideoRequestDto;
+import static com.example.video.streaming.helper.VideoCreator.createVideoResponseDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -7,11 +10,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.video.streaming.dto.VideoRequestDto;
 import com.example.video.streaming.dto.VideoResponseDto;
+import com.example.video.streaming.exception.EntityNotFoundException;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.VideoRepository;
 import com.example.video.streaming.util.MapConvertUtil;
 import com.example.video.streaming.util.MapConvertUtilImpl;
+import java.util.Collections;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,6 +62,49 @@ public class VideoServiceImplTest {
       VideoResponseDto savedVideo = videoService.saveVideo(mockFile);
       assertThat(savedVideo.getContentLink()).isEqualTo(filePath);
       verify(videoRepository, times(1)).save(any(Video.class));
+    }
+  }
+
+  @Nested
+  @DisplayName("Update Video Method")
+  class UpdateVideoTest {
+
+    @Test
+    @DisplayName("when updating a video, should update and return video")
+    public void whenUpdatingVideo_ShouldUpdateAndReturnVideo() {
+      long videoId = 1L;
+      Video mockVideo = createVideo(false);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.save(any(Video.class))).thenReturn(mockVideo);
+
+      VideoRequestDto request = createVideoRequestDto();
+      VideoResponseDto expected = createVideoResponseDto(false, Collections.emptyMap());
+      VideoResponseDto updatedVideo = videoService.updateVideo(videoId, request);
+      verify(videoRepository, times(1)).save(mockVideo);
+      assertThat(updatedVideo).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName(
+        "when updating a video which already soft deleted, should throw EntityNotFoundException")
+    public void whenUpdatingVideoWhichAlreadySoftDeleted_ShouldThrowEntityNotFoundException() {
+      long videoId = 1L;
+      VideoRequestDto videoRequestDto = new VideoRequestDto();
+      Video mockVideo = createVideo(true);
+      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      Assertions.assertThrows(
+          EntityNotFoundException.class, () -> videoService.updateVideo(videoId, videoRequestDto));
+      verify(videoRepository, times(0)).save(mockVideo);
+    }
+
+    @Test
+    @DisplayName("when updating a video which does not exist, should throw EntityNotFoundException")
+    public void whenUpdatingVideoWhichDoesNotExist_ShouldThrowEntityNotFoundException() {
+      long videoId = 1L;
+      VideoRequestDto videoRequestDto = new VideoRequestDto();
+      when(videoRepository.findById(videoId)).thenReturn(Optional.empty());
+      Assertions.assertThrows(
+          EntityNotFoundException.class, () -> videoService.updateVideo(videoId, videoRequestDto));
     }
   }
 }
