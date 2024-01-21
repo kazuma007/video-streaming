@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
 @DisplayName("Video Service Tests")
@@ -234,6 +235,26 @@ public class VideoServiceImplTest {
           VideoListResponseDto.builder().videos(List.of(createBasicVideoResponseDto())).build();
       VideoListResponseDto actual = videoService.getAvailableVideos();
       assertThat(actual).isEqualTo(expected);
+    }
+  }
+
+  @Nested
+  @DisplayName("Search Videos Method")
+  class SearchVideosTest {
+
+    @Test
+    @DisplayName("when searching for videos, should return matching videos")
+    public void whenSearchingForVideos_ShouldReturnMatchingVideos() {
+      VideoRequestDto request = new VideoRequestDto();
+      List<Video> mockVideos = List.of(createVideo(false));
+      when(videoRepository.findAll(any(Specification.class))).thenReturn(mockVideos);
+
+      VideoListResponseDto expected =
+          VideoListResponseDto.builder().videos(List.of(createBasicVideoResponseDto())).build();
+
+      VideoListResponseDto foundVideos = videoService.searchVideos(request);
+      assertThat(foundVideos).isEqualTo(expected);
+      verify(videoRepository, times(1)).findAll(any(Specification.class));
     }
   }
 }

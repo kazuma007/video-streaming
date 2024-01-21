@@ -18,4 +18,6 @@ public interface VideoService {
   VideoContentResponseDto getVideoContentById(long videoId);
 
   VideoListResponseDto getAvailableVideos();
+
+  VideoListResponseDto searchVideos(VideoRequestDto request);
 }

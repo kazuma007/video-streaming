@@ -9,9 +9,11 @@ import com.example.video.streaming.exception.EntityNotFoundException;
 import com.example.video.streaming.model.EngagementEvent;
 import com.example.video.streaming.model.Video;
 import com.example.video.streaming.repository.VideoRepository;
+import com.example.video.streaming.repository.specifications.VideoSpecifications;
 import com.example.video.streaming.util.MapConvertUtil;
 import java.util.List;
 import java.util.stream.Stream;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,6 +91,23 @@ public class VideoServiceImpl implements VideoService {
   @Override
   public VideoListResponseDto getAvailableVideos() {
     List<Video> videos = videoRepository.findAllByIsDeleted(false);
+    List<BasicVideoResponseDto> videoResponseDtoList =
+        videos.stream().map(mapConvertUtil::videoToBasicVideoResponseDto).toList();
+    return VideoListResponseDto.builder().videos(videoResponseDtoList).build();
+  }
+
+  @Override
+  public VideoListResponseDto searchVideos(VideoRequestDto request) {
+    Specification<Video> spec =
+        Specification.where(VideoSpecifications.hasTitle(request.getTitle()))
+            .and(VideoSpecifications.hasSynopsis(request.getSynopsis()))
+            .and(VideoSpecifications.hasDirector(request.getDirector()))
+            .and(VideoSpecifications.hasActor(request.getActor()))
+            .and(VideoSpecifications.hasGenre(request.getGenre()))
+            .and(VideoSpecifications.hasYearOfRelease(request.getYearOfRelease()))
+            .and(VideoSpecifications.hasRunningTime(request.getRunningTime()));
+
+    List<Video> videos = videoRepository.findAll(spec);
     List<BasicVideoResponseDto> videoResponseDtoList =
         videos.stream().map(mapConvertUtil::videoToBasicVideoResponseDto).toList();
     return VideoListResponseDto.builder().videos(videoResponseDtoList).build();
