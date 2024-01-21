@@ -26,7 +26,7 @@ Uploading large files directly through an API can be time-consuming and may lead
 
 ### Publish a video API
 
-The API to publish a video accepts a video file and return the saved content.
+The API to publish a video accepts a video file and returns the saved content.
 The uploaded file is stored in the directory in this repository.
 
 #### Example
@@ -35,6 +35,27 @@ The uploaded file is stored in the directory in this repository.
 % curl -X POST -F "file=@./{file-path}" http://localhost:8080/api/v1/videos
 
 {"videoId":1,"title":null,"synopsis":null,"director":null,"yearOfRelease":null,"genre":null,"actor":null,"runningTime":null,"contentLink":"{file-path}","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T09:15:04.605","engagementEventsCount":null,"deleted":false}
+```
+
+### Add and Edit the metadata associated with the video API
+
+The API accepts a metadata and returns the saved content.
+
+#### Example
+
+```
+% curl -X PUT http://localhost:8080/api/v1/videos/1 \
+-H "Content-Type: application/json" \
+-d '{
+    "title": "test-title",
+    "synopsis": "test-synopsis",
+    "director": "test-director",
+    "actor": "test-cast",
+    "year_of_release": 2024,
+    "genre": "drama",
+    "running_time": 120
+}'
+{"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"pexels-lina-kivaka-1741205.jpg","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T09:53:00.699","engagementEventsCount":{},"deleted":false}
 ```
 
 ## Instructions on how to compile and run the solution
