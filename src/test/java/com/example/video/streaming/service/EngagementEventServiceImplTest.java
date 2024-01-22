@@ -34,9 +34,9 @@ public class EngagementEventServiceImplTest {
 
     when(engagementEventRepository.save(any(EngagementEvent.class))).thenReturn(mockEvent);
 
+    EngagementEvent expected = createEngagementEvent(video, EngagementType.IMPRESSION);
     EngagementEvent actual = engagementEventService.saveImpression(video);
-    assertThat(actual.getEventType()).isEqualTo(EngagementType.IMPRESSION.name().toLowerCase());
-    assertThat(actual.getVideo().getVideoId()).isEqualTo(video.getVideoId());
+    assertThat(actual).isEqualTo(expected);
     verify(engagementEventRepository, times(1)).save(any(EngagementEvent.class));
   }
 
@@ -48,9 +48,9 @@ public class EngagementEventServiceImplTest {
 
     when(engagementEventRepository.save(any(EngagementEvent.class))).thenReturn(mockEvent);
 
+    EngagementEvent expected = createEngagementEvent(video, EngagementType.VIEW);
     EngagementEvent actual = engagementEventService.saveImpression(video);
-    assertThat(actual.getEventType()).isEqualTo(EngagementType.VIEW.name().toLowerCase());
-    assertThat(actual.getVideo().getVideoId()).isEqualTo(video.getVideoId());
+    assertThat(actual).isEqualTo(expected);
     verify(engagementEventRepository, times(1)).save(any(EngagementEvent.class));
   }
 }

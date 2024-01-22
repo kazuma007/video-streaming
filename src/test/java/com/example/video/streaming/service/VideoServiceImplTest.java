@@ -70,8 +70,8 @@ public class VideoServiceImplTest {
       Video videoToSave = Video.builder().contentLink(filePath).build();
       when(videoRepository.save(any(Video.class))).thenReturn(videoToSave);
 
-      VideoResponseDto savedVideo = videoService.saveVideo(mockFile);
-      assertThat(savedVideo.getContentLink()).isEqualTo(filePath);
+      VideoResponseDto actual = videoService.saveVideo(mockFile);
+      assertThat(actual.getContentLink()).isEqualTo(filePath);
       verify(videoRepository, times(1)).save(any(Video.class));
     }
   }
@@ -83,28 +83,26 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when updating a video, should update and return video")
     public void whenUpdatingVideo_ShouldUpdateAndReturnVideo() {
-      long videoId = 1L;
       Video mockVideo = createVideo(false);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
       when(videoRepository.save(any(Video.class))).thenReturn(mockVideo);
 
-      VideoRequestDto request = createVideoRequestDto();
       VideoResponseDto expected = createVideoResponseDto(false, Collections.emptyMap());
-      VideoResponseDto updatedVideo = videoService.updateVideo(videoId, request);
+      VideoResponseDto actual =
+          videoService.updateVideo(mockVideo.getVideoId(), createVideoRequestDto());
       verify(videoRepository, times(1)).save(mockVideo);
-      assertThat(updatedVideo).usingRecursiveComparison().isEqualTo(expected);
+      assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     @DisplayName(
         "when updating a video which already soft deleted, should throw EntityNotFoundException")
     public void whenUpdatingVideoWhichAlreadySoftDeleted_ShouldThrowEntityNotFoundException() {
-      long videoId = 1L;
-      VideoRequestDto videoRequestDto = new VideoRequestDto();
       Video mockVideo = createVideo(true);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
       Assertions.assertThrows(
-          EntityNotFoundException.class, () -> videoService.updateVideo(videoId, videoRequestDto));
+          EntityNotFoundException.class,
+          () -> videoService.updateVideo(mockVideo.getVideoId(), new VideoRequestDto()));
       verify(videoRepository, times(0)).save(mockVideo);
     }
 
@@ -126,10 +124,9 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when delisting a video, should mark video as deleted")
     public void whenDelistingVideo_ShouldMarkVideoAsDeleted() {
-      long videoId = 1L;
       Video mockVideo = createVideo(false);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
-      videoService.delistVideo(videoId);
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
+      videoService.delistVideo(mockVideo.getVideoId());
       verify(videoRepository, times(1)).save(mockVideo);
     }
 
@@ -151,14 +148,13 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when video exists, should return video and save impression")
     public void whenVideoExists_ShouldReturnVideoAndSaveImpression() {
-      long videoId = 1L;
       Video mockVideo = createVideo(false);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
       when(engagementEventService.saveImpression(mockVideo))
           .thenReturn(createEngagementEvent(mockVideo, EngagementType.IMPRESSION));
 
       VideoResponseDto expected = createVideoResponseDto(false, Collections.emptyMap());
-      VideoResponseDto actual = videoService.getVideoMetadataAndContentById(videoId);
+      VideoResponseDto actual = videoService.getVideoMetadataAndContentById(mockVideo.getVideoId());
       assertThat(actual).isEqualTo(expected);
       verify(engagementEventService, times(1)).saveImpression(mockVideo);
     }
@@ -166,12 +162,11 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when video exists but already soft deleted, should throw EntityNotFoundException")
     public void whenVideoExistsButAlreadySoftDeleted_ShouldThrowEntityNotFoundException() {
-      long videoId = 1L;
       Video mockVideo = createVideo(true);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
       Assertions.assertThrows(
           EntityNotFoundException.class,
-          () -> videoService.getVideoMetadataAndContentById(videoId));
+          () -> videoService.getVideoMetadataAndContentById(mockVideo.getVideoId()));
     }
 
     @Test
@@ -192,12 +187,11 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when video exists, should return video and save impression")
     public void whenVideoExists_ShouldReturnVideoAndSaveImpression() {
-      long videoId = 1L;
       Video mockVideo = createVideo(false);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
 
       VideoContentResponseDto expected = new VideoContentResponseDto(mockVideo.getContentLink());
-      VideoContentResponseDto actual = videoService.getVideoContentById(videoId);
+      VideoContentResponseDto actual = videoService.getVideoContentById(mockVideo.getVideoId());
       assertThat(actual).isEqualTo(expected);
       verify(engagementEventService, times(1)).saveView(mockVideo);
     }
@@ -205,11 +199,11 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when video exists but already soft deleted, should throw EntityNotFoundException")
     public void whenVideoExistsButAlreadySoftDeleted_ShouldThrowEntityNotFoundException() {
-      long videoId = 1L;
       Video mockVideo = createVideo(true);
-      when(videoRepository.findById(videoId)).thenReturn(Optional.of(mockVideo));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
       Assertions.assertThrows(
-          EntityNotFoundException.class, () -> videoService.getVideoContentById(videoId));
+          EntityNotFoundException.class,
+          () -> videoService.getVideoContentById(mockVideo.getVideoId()));
     }
 
     @Test
@@ -252,8 +246,8 @@ public class VideoServiceImplTest {
       VideoListResponseDto expected =
           VideoListResponseDto.builder().videos(List.of(createBasicVideoResponseDto())).build();
 
-      VideoListResponseDto foundVideos = videoService.searchVideos(request);
-      assertThat(foundVideos).isEqualTo(expected);
+      VideoListResponseDto actual = videoService.searchVideos(request);
+      assertThat(actual).isEqualTo(expected);
       verify(videoRepository, times(1)).findAll(any(Specification.class));
     }
   }
