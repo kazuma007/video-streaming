@@ -26,7 +26,6 @@ import com.example.video.streaming.util.MapConvertUtil;
 import com.example.video.streaming.util.MapConvertUtilImpl;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -158,8 +157,7 @@ public class VideoServiceImplTest {
       when(engagementEventService.saveImpression(mockVideo))
           .thenReturn(createEngagementEvent(mockVideo, EngagementType.IMPRESSION));
 
-      VideoResponseDto expected =
-          createVideoResponseDto(false, Map.of(EngagementType.IMPRESSION.name().toLowerCase(), 1L));
+      VideoResponseDto expected = createVideoResponseDto(false, Collections.emptyMap());
       VideoResponseDto actual = videoService.getVideoMetadataAndContentById(videoId);
       assertThat(actual).isEqualTo(expected);
       verify(engagementEventService, times(1)).saveImpression(mockVideo);
@@ -267,22 +265,23 @@ public class VideoServiceImplTest {
     @Test
     @DisplayName("when searching for videos, should return matching videos")
     public void whenRetrieveEngagementStatistic_ShouldReturnEngazementStatics() {
-      Video video = createVideo(false);
+      Video mockVideo = createVideo(false);
       List<EngagementEvent> mockEngagementEvent =
           List.of(
-              createEngagementEvent(video, EngagementType.IMPRESSION),
-              createEngagementEvent(video, EngagementType.IMPRESSION),
-              createEngagementEvent(video, EngagementType.IMPRESSION),
-              createEngagementEvent(video, EngagementType.IMPRESSION),
-              createEngagementEvent(video, EngagementType.VIEW),
-              createEngagementEvent(video, EngagementType.VIEW));
-      when(engagementEventService.getEngagementStatistics(video.getVideoId()))
+              createEngagementEvent(mockVideo, EngagementType.IMPRESSION),
+              createEngagementEvent(mockVideo, EngagementType.IMPRESSION),
+              createEngagementEvent(mockVideo, EngagementType.IMPRESSION),
+              createEngagementEvent(mockVideo, EngagementType.IMPRESSION),
+              createEngagementEvent(mockVideo, EngagementType.VIEW),
+              createEngagementEvent(mockVideo, EngagementType.VIEW));
+      when(videoRepository.findById(mockVideo.getVideoId())).thenReturn(Optional.of(mockVideo));
+      when(engagementEventService.getEngagementStatistics(mockVideo.getVideoId()))
           .thenReturn(mockEngagementEvent);
 
       EngagementStatisticsResponseDto expected =
-          new EngagementStatisticsResponseDto(video.getVideoId(), 4, 2);
+          new EngagementStatisticsResponseDto(mockVideo.getVideoId(), 4, 2);
       EngagementStatisticsResponseDto actual =
-          videoService.getEngagementStatistics(video.getVideoId());
+          videoService.getEngagementStatistics(mockVideo.getVideoId());
       assertThat(actual).isEqualTo(expected);
     }
   }

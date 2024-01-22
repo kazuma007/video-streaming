@@ -9,7 +9,7 @@ import java.util.Map;
 public class VideoCreator {
   public static Video createVideo(boolean isDeleted) {
     return Video.builder()
-        .contentLink("test.jpg")
+        .contentLink("test-video.mov")
         .title("test-title")
         .actor("test-actor")
         .genre("test-genre")
@@ -24,7 +24,7 @@ public class VideoCreator {
   public static VideoResponseDto createVideoResponseDto(
       boolean isDeleted, Map<String, Long> engagementEventsCount) {
     return VideoResponseDto.builder()
-        .contentLink("test.jpg")
+        .contentLink("test-video.mov")
         .title("test-title")
         .actor("test-actor")
         .genre("test-genre")
@@ -38,15 +38,15 @@ public class VideoCreator {
   }
 
   public static VideoRequestDto createVideoRequestDto() {
-    VideoRequestDto videoRequestDto = new VideoRequestDto();
-    videoRequestDto.setTitle("test-title");
-    videoRequestDto.setActor("test-actor");
-    videoRequestDto.setGenre("test-genre");
-    videoRequestDto.setDirector("test-director");
-    videoRequestDto.setRunningTime(5);
-    videoRequestDto.setSynopsis("test-synopsis");
-    videoRequestDto.setYearOfRelease(2023);
-    return videoRequestDto;
+    return VideoRequestDto.builder()
+        .title("test-title")
+        .actor("test-actor")
+        .genre("test-genre")
+        .director("test-director")
+        .runningTime(5)
+        .synopsis("test-synopsis")
+        .yearOfRelease(2023)
+        .build();
   }
 
   public static BasicVideoResponseDto createBasicVideoResponseDto() {

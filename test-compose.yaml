@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  test-postgres:
+    image: postgres:16.1
+    environment:
+      POSTGRES_DB: 'postgres'
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'secret'
+      PGPORT: 5433
+    ports:
+      - "5433:5433"

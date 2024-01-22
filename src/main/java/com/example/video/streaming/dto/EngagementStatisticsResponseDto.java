@@ -11,6 +11,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class EngagementStatisticsResponseDto {
   private long videoId;
-  private int impressionsCount;
-  private int viewsCount;
+  private long impressionsCount;
+  private long viewsCount;
 }

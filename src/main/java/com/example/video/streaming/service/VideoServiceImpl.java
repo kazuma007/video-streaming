@@ -16,7 +16,6 @@ import com.example.video.streaming.util.MapConvertUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +74,7 @@ public class VideoServiceImpl implements VideoService {
   @Transactional
   public VideoResponseDto getVideoMetadataAndContentById(long videoId) {
     Video video = findActiveVideoById(videoId);
+    // When a client loading a video, impression should be added
     engagementEventService.saveImpression(video);
     return mapConvertUtil.videoToVideoResponseDto(video);
   }
@@ -82,6 +82,7 @@ public class VideoServiceImpl implements VideoService {
   @Override
   public VideoContentResponseDto getVideoContentById(long videoId) {
     Video video = findActiveVideoById(videoId);
+    // When a client playing a video, view should be added
     engagementEventService.saveView(video);
     return new VideoContentResponseDto(video.getContentLink());
   }
@@ -96,6 +97,7 @@ public class VideoServiceImpl implements VideoService {
 
   @Override
   public VideoListResponseDto searchVideos(VideoRequestDto request) {
+    // Create a search query depending on the parameter
     Specification<Video> spec =
         Specification.where(VideoSpecifications.hasTitle(request.getTitle()))
             .and(VideoSpecifications.hasSynopsis(request.getSynopsis()))
@@ -112,7 +114,9 @@ public class VideoServiceImpl implements VideoService {
   }
 
   public EngagementStatisticsResponseDto getEngagementStatistics(long videoId) {
-    List<EngagementEvent> events = engagementEventService.getEngagementStatistics(videoId);
+    Video video = findActiveVideoById(videoId);
+    List<EngagementEvent> events =
+        engagementEventService.getEngagementStatistics(video.getVideoId());
 
     Map<String, Long> counts =
         events.stream()
