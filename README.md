@@ -9,12 +9,14 @@ The main purpose of the application is to:
 
 ## Decision
 
-### Table definition
+### Database
 
 I have decided to create `Video` table and `EngagementEvent` table.
 `Video` table is to manage information about video content, while `EngagementEvent` table tracks user engagement activities (such as views and impressions).
 
 ![Table definition](table-definition.png)
+
+For local development, Docker is utilized for creating a consistent and isolated environment that mirrors production settings, ensuring that developers can work in a standardized setup.
 
 ### File(Video) upload
 
@@ -23,6 +25,8 @@ This time, due to the time constraints, I have decided to upload a file to the l
 Uploading large files directly through an API can be time-consuming and may lead to timeouts or performance issues. Therefore, asynchronous processing such as a queue system can be utilized in the future.
 
 ## Assumption
+
+Below is the assumption regarding request and response for each API.
 
 ### Publish a video API
 
@@ -55,6 +59,7 @@ The API accepts a metadata and returns the saved content.
     "genre": "drama",
     "running_time": 120
 }'
+
 {"videoId":1,"title":"test-title","synopsis":"test-synopsis","director":"test-director","yearOfRelease":2024,"genre":"drama","actor":"test-cast","runningTime":120,"contentLink":"test-video.mp4","createdAt":"2024-01-21T09:15:04.605","updatedAt":"2024-01-21T09:53:00.699","engagementEventsCount":{},"deleted":false}
 ```
 
@@ -136,12 +141,58 @@ The API returns the engagement statistic for a video such as impressions and vie
 {"videoId":1,"impressionsCount":6,"viewsCount":2}
 ```
 
-## Instructions on how to compile and run the solution
+## Getting started
+
+### Prerequisites
+
+- JDK 17
+- Docker version 24.0.5 or higher
+- Docker Compose version v2.20.2-desktop.1 or higher
+
+### Instructions on how to compile and run the solution
 
 1. Set up the database
 
 Run the following command
 
 ```
-video-streaming % docker compose up -d
+% docker compose up -d
+```
+
+2. Build the project
+
+```
+% ./gradlew build -x test
+```
+
+The test includes an integration test which requires the database for the testing.
+Therefore, you can run the following command if you want to include the testing as well for the build command.
+
+```
+% docker compose -f test-compose.yaml up -d
+% ./gradlew build
+```
+
+3. Run the application
+
+```
+% ./gradlew bootRun
+```
+
+### Unit test
+
+```
+% ./gradlew unit-test
+```
+
+### Integration test
+
+```
+% ./run-integration-test.sh
+```
+
+### Format
+
+```
+% ./gradlew spotlessJavaApply
 ```
