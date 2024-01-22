@@ -2,6 +2,7 @@ package com.example.video.streaming.service;
 
 import com.example.video.streaming.config.ApplicationProperties;
 import com.example.video.streaming.exception.FileStorageException;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,10 +19,13 @@ class FileServiceImpl implements FileService {
 
   private final Path fileStorageLocation;
 
-  @Autowired
   FileServiceImpl(ApplicationProperties applicationProperties) {
     this.fileStorageLocation =
         Paths.get(applicationProperties.getFileStorageLocation()).toAbsolutePath().normalize();
+  }
+
+  @PostConstruct
+  public void init() {
     try {
       Files.createDirectories(this.fileStorageLocation);
     } catch (Exception e) {
